@@ -65,7 +65,7 @@ def _blend_labels(image, labels, label_names_dict=None,
             if isinstance(label_names_dict, dict) and i not in label_names_dict:
                 bg_mask = np.logical_or(bg_mask, labels == i)
                 colors.append(np.zeros((3)))
-                
+
                 continue
             label_name = label_names_dict[i]
             if label_name in _names_in_static_label_colors:
@@ -121,13 +121,16 @@ def draw_seg(image, seg_logits):
     #          label_names_dict=LABEL_NAMES) * 255).astype(image.dtype)
     return image
 
+
 def show_img(img_parse, save_path='test.jpg'):
     # input shape is hwc
     if img_parse.dtype != np.uint8:
         img_parse = img_parse.astype(np.uint8)
     Image.fromarray(img_parse).save(save_path)
 
-def draw_landmark(image, content):
+
+def draw_landmark(img, content):
+    image = img.copy()
     h, w, _ = image.shape
     for x, y in content:
         x = max(min(int(x), w-1), 0)
@@ -141,6 +144,7 @@ def draw_landmark(image, content):
         image[rr, cc] = image[rr, cc] * (1.0-val) + val * 255
 
     return image
+
 
 def _draw_hwc(image: torch.Tensor, data: Dict[str, torch.Tensor]):
     dtype = image.dtype
@@ -175,7 +179,7 @@ def _draw_hwc(image: torch.Tensor, data: Dict[str, torch.Tensor]):
 
 
 def draw_bchw(images, data):
-    # input shape is h,w,c  
+    # input shape is h,w,c
 
     image = _draw_hwc(images, data).permute(2, 0, 1).unsqueeze(0)
     return image

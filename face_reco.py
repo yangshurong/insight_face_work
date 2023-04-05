@@ -10,6 +10,9 @@ import numpy as np
 from sklearn import preprocessing
 import os
 import sys
+from pytriton.decorators import batch
+from pytriton.model_config import ModelConfig, Tensor
+from pytriton.triton import Triton
 sys.path.append(os.getcwd())
 logger = logging.getLogger('face_reco')
 
@@ -53,19 +56,20 @@ class FaceRecognition:
 
     def model_run(self, image):
         # input shape is hwc
+
         dets = self.detector.inference_on_image(image)
+        # dets = self.detector.inference_on_image(np.zeros([224, 224, 3]))
         if len(dets) != 1:
             logger.info('can not get one face')
             return
 
         dets = dets[0]
-        # face = Face(bbox=dets[0:4], det_score=dets[4])
-        # self.mark_2d.get(image, face)
+        face = Face(bbox=dets[0:4], det_score=dets[4])
+        self.mark_2d.get(image, face)
         # self.mark_3d.get(image, face)
-        # self.arcface.get(image, face)
-        # show_img(self.face_parsing.predict(image), 'test_parse.jpg')
-        # show_img(draw_landmark(image, face['landmark_2d_106']))
-
+        self.arcface.get(image, face)
+        show_img(self.face_parsing.predict(image), 'test_parse.jpg')
+        show_img(draw_landmark(image, face['landmark_2d_106']))
 
     def recognition(self, image):
         face = self.model.get(image)
@@ -83,21 +87,20 @@ class FaceRecognition:
 
     def out_detect_image(self, img, faces):
         pass
-        
+
     def detect(self, image):
         pass
 
 
 if __name__ == '__main__':
-    my_path = '/home/a/work_dir/insight_face_work/face_db/001022.jpg'
-    img_path = '/home/a/work_dir/insight_face_work/test.PNG'
+    my_path = '/mnt/f/home/insight_face_work/face_db/000801.jpg'
+    # img_path = '/home/a/work_dir/insight_face_work/test.PNG'
     # img = cv2.imdecode(np.fromfile(my_path, dtype=np.uint8), -1)
     # img=cv2.cvtColor(img,cv2.COLOR_RGBA2RGB)
     # print(img.shape)
     img = cv2.imread(my_path, cv2.IMREAD_COLOR)
     # img = np.array(img).astype('float32')
     # img = np.transpose(img, (2, 0, 1))
-
     face_recognitio = FaceRecognition()
     face_db_path = '/home/a/work_dir/insight_face_work/face_db'
     # for root, dirs, files in os.walk(face_db_path):
@@ -105,10 +108,10 @@ if __name__ == '__main__':
 
     #         if not file.endswith('.jpg') and not file.endswith('.png'):
     #             continue
-            # n_file = os.path.join(face_db_path, file)
-            # # img = ins_get_image(n_file, False)
-            # img=cv2.imread(n_file)
-            # print(face_recognitio.get_face(img))
+    # n_file = os.path.join(face_db_path, file)
+    # # img = ins_get_image(n_file, False)
+    # img=cv2.imread(n_file)
+    # print(face_recognitio.get_face(img))
 
     face_recognitio.model_run(img)
     # results, faces = face_recognitio.detect(img)

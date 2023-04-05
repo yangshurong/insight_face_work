@@ -112,15 +112,13 @@ class FaceParsing():
                 size=(height, width), mode='bilinear', align_corners=True)
 
             input_img = self.face_parsing_tool.preprocess(im)
-            # print(im.shape)
             parsing = self.model(input_img.cuda())
             parsing = interp(parsing)[0]
             # img_mark=draw_landmark(input_img,)
 
             draw_img = input_img[0].permute(1, 2, 0).cpu().numpy()
+            # print(parsing)
             return draw_seg(draw_img, parsing)
-
-    
 
     # parsing is NCWH
 

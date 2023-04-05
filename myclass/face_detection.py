@@ -52,18 +52,19 @@ class FaceDetector:
             A numpy array, the shape is N * (x, y, w, h, confidence), 
             N is the number of detection box.
         """
+        input_img=image.copy()
         cudnn.benchmark = True
         input_height, input_width, _ = image.shape
         try:
-            image, scale = self._preprocess(image)
+            input_img, scale = self._preprocess(input_img)
         except Exception as e:
             raise e
         self.model = self.model.to(self.device)
-        image = torch.from_numpy(image).unsqueeze(0)
+        input_img = torch.from_numpy(input_img).unsqueeze(0)
         with torch.no_grad():
-            image = image.to(self.device)
+            input_img = input_img.to(self.device)
             scale = scale.to(self.device)
-            loc, conf, landms = self.model(image)
+            loc, conf, landms = self.model(input_img)
         dets = self._postprocess(loc, conf, scale, input_height, input_width)
         return dets
 
