@@ -4,3 +4,4 @@ from .face_detection import FaceDetector, Face
 from .dml_csr import DML_CSR
 from .utils import FaceParsing
 from .landmark import Landmark
+from .face_anti_spoof import AntiSpoofDetect

@@ -8,15 +8,24 @@ my_path = '/mnt/f/home/insight_face_work/face_db/000801.jpg'
 img = np.asarray(Image.open(my_path))
 img = np.array([img])
 
-with ModelClient("localhost:8000", "get_landmark_parsing") as client:
-    result_dict = client.infer_batch(img)
-    for k, v in result_dict.items():
-        print(v.shape)
-    show_img(result_dict['landmark_image'][0], 'test_landmark.jpg')
-    show_img(result_dict['parsing_image'][0], 'test_parsing.jpg')
+# with ModelClient("localhost:8000", "get_landmark_parsing") as client:
+#     result_dict = client.infer_batch(img)
+#     for k, v in result_dict.items():
+#         print(v.shape)
+#     show_img(result_dict['landmark_image'][0], 'test_landmark.jpg')
+#     show_img(result_dict['parsing_image'][0], 'test_parsing.jpg')
+
+# a = np.array(['123', '123'], dtype=np.str_)
+# print('a type is', a.dtype)
 
 with ModelClient("localhost:8000", "get_embedding") as client:
-    result_dict = client.infer_batch(img)
+    result_dict = client.infer_batch(
+        img, np.array([['test name']], dtype=np.string_))
     for k, v in result_dict.items():
         print(v.shape)
-    # print(result_dict['embedding'][0])
+# print(result_dict['embedding'][0])
+
+# with ModelClient("localhost:8000", "get_face_anti") as client:
+#     result_dict = client.infer_batch(img)
+#     for k, v in result_dict.items():
+#         print(k, v)
